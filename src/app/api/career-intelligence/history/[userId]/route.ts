@@ -1,0 +1,24 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { crossModuleCoherenceEngine } from '@/lib/engine/CrossModuleCoherenceEngine';
+
+export const runtime = 'nodejs';
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { userId: string } }
+) {
+  try {
+    const userId = decodeURIComponent(params.userId);
+    const history = crossModuleCoherenceEngine.getAuditTrail(userId);
+
+    return NextResponse.json({
+      success: true,
+      data: history,
+    });
+  } catch (err: any) {
+    return NextResponse.json(
+      { success: false, error: err?.message || 'Failed to retrieve audit history' },
+      { status: 500 }
+    );
+  }
+}
